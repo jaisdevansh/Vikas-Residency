@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-export const runtime = "edge";
-
 import { getAllBookings } from "@/backend/services/booking.service";
 
 async function fetchBookings() {

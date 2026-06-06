@@ -1,7 +1,5 @@
 import RoomsAdminClient from "./RoomsAdminClient";
 
-export const runtime = "edge";
-
 import { getRooms } from "@/backend/services/property.service";
 
 export default async function AdminRoomsPage() {

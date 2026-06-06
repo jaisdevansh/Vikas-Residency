@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, Calendar, User, CheckCircle, Lightbulb } from "lucide-react";
+import { getBlogs, getBlogBySlug } from "@/backend/services/blogs.service";
 
 export const revalidate = 60; // ISR for blog detail page
 
@@ -101,15 +102,11 @@ type Props = {
 
 export async function generateStaticParams() {
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const res = await fetch(`${backendUrl}/api/blogs`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.blogs) {
-        return data.blogs.map((blog: any) => ({
-          slug: blog.slug,
-        }));
-      }
+    const blogs = await getBlogs();
+    if (blogs && blogs.length > 0) {
+      return blogs.map((blog: any) => ({
+        slug: blog.slug,
+      }));
     }
   } catch (err) {
     console.error("Failed to generate static params for blogs:", err);
@@ -127,21 +124,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   let post: { title: string; intro: string } | null = null;
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const res = await fetch(`${backendUrl}/api/blogs/${slug}`, {
-      next: { revalidate: 60 },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.blog) {
-        post = {
-          title: data.blog.title,
-          intro: data.blog.intro,
-        };
-      }
+    const dbBlog = await getBlogBySlug(slug);
+    if (dbBlog) {
+      post = {
+        title: dbBlog.title,
+        intro: dbBlog.intro,
+      };
     }
   } catch (error) {
-    console.error("Failed to fetch blog metadata from API:", error);
+    console.error("Failed to fetch blog metadata:", error);
   }
 
   // Fallback to static blog data
@@ -166,41 +157,34 @@ export default async function BlogPost({ params }: Props) {
   let post: BlogPostDetail | null = null;
 
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const res = await fetch(`${backendUrl}/api/blogs/${slug}`, {
-      next: { revalidate: 60 },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.blog) {
-        const b = data.blog;
+    const dbBlog = await getBlogBySlug(slug);
+    if (dbBlog) {
+      const b = dbBlog;
+      const paragraphs = typeof b.paragraphs === "string"
+        ? b.paragraphs.split("\n\n").map((p: string) => p.trim()).filter(Boolean)
+        : (Array.isArray(b.paragraphs) ? b.paragraphs : []);
         
-        const paragraphs = typeof b.paragraphs === "string"
-          ? b.paragraphs.split("\n\n").map((p: string) => p.trim()).filter(Boolean)
-          : (Array.isArray(b.paragraphs) ? b.paragraphs : []);
-          
-        const localTips = typeof b.local_tips === "string"
-          ? b.local_tips.split("\n\n").map((t: string) => t.trim()).filter(Boolean)
-          : (Array.isArray(b.local_tips) ? b.local_tips : []);
+      const localTips = typeof b.local_tips === "string"
+        ? b.local_tips.split("\n\n").map((t: string) => t.trim()).filter(Boolean)
+        : (Array.isArray(b.local_tips) ? b.local_tips : []);
 
-        post = {
-          title: b.title,
-          date: b.date,
-          categoryLabel: b.category_label || b.categoryLabel || "Travel Tips",
-          readTime: b.read_time || b.readTime || "5 min read",
-          imageUrl: b.image_url || b.imageUrl,
-          author: {
-            name: b.author_name || b.author?.name || "Amit Vikas",
-            role: b.author_role || b.author?.role || "Vikas Residency Host",
-          },
-          intro: b.intro,
-          paragraphs,
-          localTips,
-        };
-      }
+      post = {
+        title: b.title,
+        date: b.date,
+        categoryLabel: b.category_label || b.categoryLabel || "Travel Tips",
+        readTime: b.read_time || b.readTime || "5 min read",
+        imageUrl: b.image_url || b.imageUrl,
+        author: {
+          name: b.author_name || b.author?.name || "Amit Vikas",
+          role: b.author_role || b.author?.role || "Vikas Residency Host",
+        },
+        intro: b.intro,
+        paragraphs,
+        localTips,
+      };
     }
   } catch (error) {
-    console.error("Failed to fetch blog post by slug from API, using default data", error);
+    console.error("Failed to fetch blog post by slug, using default data", error);
   }
 
   // Fallback to static data

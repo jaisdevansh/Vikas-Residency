@@ -1,7 +1,5 @@
 import GalleryAdminClient from "./GalleryAdminClient";
 
-export const runtime = "edge";
-
 import { getGalleryImages } from "@/backend/services/gallery.service";
 
 async function getImages() {

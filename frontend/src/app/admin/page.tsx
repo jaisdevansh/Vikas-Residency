@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { CalendarDays, Users, Bed, CreditCard } from "lucide-react";
 
-export const runtime = "edge";
-
 import { getBookingStats, getRecentBookings } from "@/backend/services/booking.service";
 
 async function getStats() {

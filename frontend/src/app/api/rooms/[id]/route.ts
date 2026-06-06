@@ -1,20 +1,14 @@
 import { NextResponse } from 'next/server';
 import { updateRoom, deleteRoom } from '@/backend/services/property.service';
-import { cookies } from 'next/headers';
+import { checkApiAuth } from '@/lib/auth';
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-async function checkAuth() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth-token')?.value;
-  return !!token;
-}
-
 export async function PUT(req: Request, { params }: Props) {
   try {
-    const isAuthenticated = await checkAuth();
+    const isAuthenticated = await checkApiAuth();
     if (!isAuthenticated) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -41,7 +35,7 @@ export async function PUT(req: Request, { params }: Props) {
 
 export async function DELETE(req: Request, { params }: Props) {
   try {
-    const isAuthenticated = await checkAuth();
+    const isAuthenticated = await checkApiAuth();
     if (!isAuthenticated) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

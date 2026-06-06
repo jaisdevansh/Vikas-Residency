@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Gallery from "@/components/sections/Gallery";
+import { getGalleryImages } from "@/backend/services/gallery.service";
 
 export const metadata: Metadata = {
   title: "Photo Gallery | Vikas Residency",
@@ -7,18 +8,11 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
-  const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-  let images = [];
+  let images: any[] = [];
   try {
-    const res = await fetch(`${backendUrl}/api/gallery`, { next: { revalidate: 60 } });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.images) {
-        images = data.images;
-      }
-    }
+    images = await getGalleryImages();
   } catch (error) {
-    console.error("Failed to fetch gallery images on server:", error);
+    console.error("Failed to fetch gallery images:", error);
   }
 
   return (

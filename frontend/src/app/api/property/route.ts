@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPropertyDetails } from '@/backend/services/property.service';
 
-export const runtime = 'edge';
 export const revalidate = 60; // Cache for 60 seconds
 
 export async function GET() {

@@ -10,9 +10,9 @@ const roomsFile = path.join(dataDir, 'rooms.json');
 const defaultRooms = [
   { id: 1, name: "Premium Ganga View Room", price: 3500, capacity: 2, image_url: "/r1.2.jpeg" },
   { id: 2, name: "Family Suite", price: 5500, capacity: 4, image_url: "/r2.jpeg" },
-  { id: 3, name: "Deluxe Comfort Room", price: 2500, capacity: 2, image_url: "/r3.jpg" },
-  { id: 4, name: "Standard Room", price: 1500, capacity: 2, image_url: "/r4.jpg" },
-  { id: 5, name: "Budget Single Room", price: 1000, capacity: 1, image_url: "/r5.jpg" }
+  { id: 3, name: "Deluxe Comfort Room", price: 2500, capacity: 2, image_url: "/r2.1.jpeg" },
+  { id: 4, name: "Standard Room", price: 1500, capacity: 2, image_url: "/r2.3.jpeg" },
+  { id: 5, name: "Budget Single Room", price: 1000, capacity: 1, image_url: "/r2.4.jpeg" }
 ];
 
 function loadMockRooms(): any[] {

@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import RoomsClient from "./RoomsClient";
+import { getRooms } from "@/backend/services/property.service";
 
 export const metadata: Metadata = {
   title: "Premium & Budget Rooms",
@@ -8,16 +9,11 @@ export const metadata: Metadata = {
 export const revalidate = 60; // ISR with 1-minute revalidation
 
 export default async function RoomsPage() {
-  const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-  let dbRooms = [];
+  let dbRooms: any[] = [];
   try {
-    const res = await fetch(`${backendUrl}/api/rooms`, { next: { revalidate: 60 } });
-    const data = await res.json();
-    if (data.success && data.rooms) {
-      dbRooms = data.rooms;
-    }
+    dbRooms = await getRooms();
   } catch (err) {
-    console.error("Failed to fetch rooms from backend API:", err);
+    console.error("Failed to fetch rooms:", err);
   }
   
   const formattedRooms = dbRooms.map((room: any) => ({

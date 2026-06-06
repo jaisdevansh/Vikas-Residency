@@ -1,7 +1,5 @@
 import ReviewsAdminClient from "./ReviewsAdminClient";
 
-export const runtime = "edge";
-
 import { getReviews } from "@/backend/services/review.service";
 
 export default async function AdminReviewsPage() {

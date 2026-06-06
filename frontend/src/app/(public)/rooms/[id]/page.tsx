@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Wifi, Tv, Wind, CheckCircle2, MapPin } from "lucide-react";
+import { getRooms } from "@/backend/services/property.service";
 
 export const revalidate = 60; // ISR for room pages
 
@@ -73,15 +74,11 @@ const roomTemplates: Record<string, any> = {
 
 export async function generateStaticParams() {
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const res = await fetch(`${backendUrl}/api/rooms`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.rooms) {
-        return data.rooms.map((room: any) => ({
-          id: String(room.id),
-        }));
-      }
+    const rooms = await getRooms();
+    if (rooms && rooms.length > 0) {
+      return rooms.map((room: any) => ({
+        id: String(room.id),
+      }));
     }
   } catch (err) {
     console.error("Failed to generate static params for rooms:", err);
@@ -100,25 +97,21 @@ export default async function RoomDetailPage({ params }: Props) {
   // Let's query room details from database/mock endpoint
   let dbRoom: any = null;
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const res = await fetch(`${backendUrl}/api/rooms`, { next: { revalidate: 60 } });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.rooms) {
-        dbRoom = data.rooms.find((r: any) => String(r.id) === idStr);
-      }
+    const rooms = await getRooms();
+    if (rooms && rooms.length > 0) {
+      dbRoom = rooms.find((r: any) => String(r.id) === idStr);
     }
   } catch (err) {
-    console.error("Failed to fetch room detail from backend API:", err);
+    console.error("Failed to fetch room detail:", err);
   }
 
   // Local fallback rooms in case the backend is down
   const localRooms = [
     { id: "1", name: "Premium Comfort Room", price: "3500.00", capacity: 2, image_url: "/r1.2.jpeg" },
     { id: "2", name: "Spacious Family Room", price: "5500.00", capacity: 4, image_url: "/r2.jpeg" },
-    { id: "3", name: "Deluxe Comfort Room", price: "2500.00", capacity: 2, image_url: "/r3.jpg" },
-    { id: "4", name: "Standard Room", price: "1500.00", capacity: 2, image_url: "/r4.jpg" },
-    { id: "5", name: "Budget Single Room", price: "1000.00", capacity: 1, image_url: "/r5.jpg" },
+    { id: "3", name: "Deluxe Comfort Room", price: "2500.00", capacity: 2, image_url: "/r2.1.jpeg" },
+    { id: "4", name: "Standard Room", price: "1500.00", capacity: 2, image_url: "/r2.3.jpeg" },
+    { id: "5", name: "Budget Single Room", price: "1000.00", capacity: 1, image_url: "/r2.4.jpeg" },
   ];
 
   // Resolve room from either db or local fallback

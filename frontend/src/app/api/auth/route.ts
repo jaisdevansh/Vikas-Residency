@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
+import { signToken } from '@/lib/auth';
+
 export const runtime = 'edge';
 
-// NOTE: Hardcoded for demonstration. In production, use a hashed DB password or NextAuth.
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'password123';
 
@@ -12,8 +13,7 @@ export async function POST(req: Request) {
     const { username, password } = await req.json();
 
     if (username === ADMIN_USER && password === ADMIN_PASS) {
-      // Create a secure token (In production, use JWT)
-      const token = Buffer.from(`${username}:${Date.now()}`).toString('base64');
+      const token = await signToken(username);
       
       const cookieStore = await cookies();
       cookieStore.set({

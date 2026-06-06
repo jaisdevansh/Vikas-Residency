@@ -2,6 +2,8 @@ import dynamic from "next/dynamic";
 import Hero from "@/components/sections/Hero";
 import FeaturesGrid from "@/components/sections/FeaturesGrid";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { getRooms } from "@/backend/services/property.service";
+import { getReviews } from "@/backend/services/review.service";
 
 // Dynamic imports for below-the-fold heavy sections
 const RoomsPreview = dynamic(() => import("@/components/sections/RoomsPreview"), { 
@@ -28,30 +30,18 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-  
-  let rooms = [];
+  let rooms: any[] = [];
+  let reviews: any[] = [];
+
   try {
-    const res = await fetch(`${backendUrl}/api/rooms`, { next: { revalidate: 60 } });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.rooms) {
-        rooms = data.rooms;
-      }
-    }
+    rooms = await getRooms();
   } catch (err) {
     console.error("Failed to fetch rooms for home page:", err);
   }
 
-  let reviews = [];
   try {
-    const res = await fetch(`${backendUrl}/api/reviews`, { next: { revalidate: 60 } });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.data) {
-        reviews = data.data;
-      }
-    }
+    const reviewData = await getReviews();
+    reviews = reviewData;
   } catch (err) {
     console.error("Failed to fetch reviews for home page:", err);
   }

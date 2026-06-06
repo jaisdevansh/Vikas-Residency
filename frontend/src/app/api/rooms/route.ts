@@ -1,16 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRooms, createRoom } from '@/backend/services/property.service';
-import { cookies } from 'next/headers';
-
-// Helper to verify auth token for admin operations
-async function checkAuth() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth-token')?.value;
-  if (!token) {
-    return false;
-  }
-  return true;
-}
+import { checkApiAuth } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -30,7 +20,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const isAuthenticated = await checkAuth();
+    const isAuthenticated = await checkApiAuth();
     if (!isAuthenticated) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

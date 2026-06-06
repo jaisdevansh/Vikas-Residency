@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import BlogClient from "./BlogClient";
+import { getBlogs } from "@/backend/services/blogs.service";
 
 export const metadata: Metadata = {
   title: "Travel Blog | Discover Varanasi | Vikas Residency",
@@ -72,31 +73,25 @@ export default async function BlogIndexPage() {
   let displayPosts = defaultBlogPosts;
 
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const res = await fetch(`${backendUrl}/api/blogs`, {
-      next: { revalidate: 60 },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.blogs && data.blogs.length > 0) {
-        displayPosts = data.blogs.map((b: any) => ({
-          slug: b.slug,
-          title: b.title,
-          excerpt: b.excerpt,
-          date: b.date,
-          category: b.category,
-          categoryLabel: b.category_label || b.categoryLabel,
-          readTime: b.read_time || b.readTime,
-          imageUrl: b.image_url || b.imageUrl,
-          author: {
-            name: b.author_name || b.author?.name || "Amit Vikas",
-            role: b.author_role || b.author?.role || "Vikas Residency Host",
-          },
-        }));
-      }
+    const blogsFromDb = await getBlogs();
+    if (blogsFromDb && blogsFromDb.length > 0) {
+      displayPosts = blogsFromDb.map((b: any) => ({
+        slug: b.slug,
+        title: b.title,
+        excerpt: b.excerpt,
+        date: b.date,
+        category: b.category,
+        categoryLabel: b.category_label || b.categoryLabel,
+        readTime: b.read_time || b.readTime,
+        imageUrl: b.image_url || b.imageUrl,
+        author: {
+          name: b.author_name || b.author?.name || "Amit Vikas",
+          role: b.author_role || b.author?.role || "Vikas Residency Host",
+        },
+      }));
     }
   } catch (error) {
-    console.error("Failed to fetch blogs from API, using default blogs", error);
+    console.error("Failed to fetch blogs, using default blogs", error);
   }
 
   return (
