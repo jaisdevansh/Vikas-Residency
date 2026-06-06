@@ -47,6 +47,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Preload hero image so browser starts fetching before React renders */}
+        <link rel="preload" as="image" href="/1.jpeg" fetchPriority="high" />
         <link rel="preconnect" href="https://images.unsplash.com" />
       </head>
       <body className="min-h-screen flex flex-col font-sans transition-colors duration-300" suppressHydrationWarning>

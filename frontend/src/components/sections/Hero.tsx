@@ -37,7 +37,8 @@ export default function Hero() {
   const [showNumbers, setShowNumbers] = useState(false);
   const { isSlowNetwork, reduceMotion } = useAdaptiveConfig();
 
-  // Determine dynamic image quality based on network
+  // Always use high quality for first (LCP) image; reduce for subsequent images on slow networks
+  const firstImageQuality = 85;
   const imageQuality = isSlowNetwork ? 50 : 75;
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function Hero() {
               fetchPriority={index === 0 ? "high" : "auto"}
               className="object-cover"
               sizes="100vw"
-              quality={imageQuality}
+              quality={index === 0 ? firstImageQuality : imageQuality}
             />
           </div>
         );
@@ -99,9 +100,9 @@ export default function Hero() {
           Spiritual Elegance in Varanasi
         </p>
         
+        {/* LCP element — no opacity animation so browser can paint it immediately */}
         <h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-white max-w-4xl leading-tight mb-6 drop-shadow-lg px-2 animate-fade-in-up"
-          style={{ animationDelay: "400ms" }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-white max-w-4xl leading-tight mb-6 drop-shadow-lg px-2 animate-slide-in-up"
         >
           Discover Inner Peace at <span className="text-accent italic">Vikas Residency</span>
         </h1>
