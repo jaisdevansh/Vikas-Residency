@@ -1,0 +1,27 @@
+[
+  {
+    "id": 2,
+    "image_url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200&auto=format&fit=crop",
+    "caption": "Spiritual Ganga Aarti"
+  },
+  {
+    "id": 3,
+    "image_url": "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?q=80&w=1200&auto=format&fit=crop",
+    "caption": "Stunning Sunrises"
+  },
+  {
+    "id": 4,
+    "image_url": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1200&auto=format&fit=crop",
+    "caption": "Peaceful Spaces"
+  },
+  {
+    "id": 5,
+    "image_url": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1200&auto=format&fit=crop",
+    "caption": "Traditional Hospitality"
+  },
+  {
+    "id": 6,
+    "image_url": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200&auto=format&fit=crop",
+    "caption": "Elegant Interiors"
+  }
+]

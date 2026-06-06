@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Premium Ganga View Room",
+    "price": 2000,
+    "capacity": 4,
+    "image_url": "/r1.2.jpeg"
+  },
+  {
+    "id": 2,
+    "name": "Family Suite",
+    "price": 1500,
+    "capacity": 2,
+    "image_url": "/r2.jpeg"
+  }
+]

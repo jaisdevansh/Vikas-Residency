@@ -1,0 +1,30 @@
+[
+  {
+    "id": "rev2",
+    "name": "Sneha Reddy",
+    "rating": 5,
+    "text": "Amazing stay with friends. Owner is very cooperative. Great location — highly recommended for a budget trip.",
+    "date": "2 months ago"
+  },
+  {
+    "id": "rev3",
+    "name": "Amit Kumar",
+    "rating": 5,
+    "text": "All sightseeing places were right in front. Owner was very helpful. Reasonable price too.",
+    "date": "3 months ago"
+  },
+  {
+    "id": "rev4",
+    "name": "Priya Singh",
+    "rating": 5,
+    "text": "Stayed with family. Completely safe and comfortable. All places to visit are right next to the hotel.",
+    "date": "4 months ago"
+  },
+  {
+    "id": "rev5",
+    "name": "Vikram Sharma",
+    "rating": 5,
+    "text": "Great hotel with perfect location. All tourist spots nearby. Owner is very nice and humble. Totally worth it.",
+    "date": "5 months ago"
+  }
+]
