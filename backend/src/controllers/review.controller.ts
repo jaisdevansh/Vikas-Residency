@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
 
-const dataDir = path.join(__dirname, '../../data');
+const dataDir = process.env.VERCEL 
+  ? '/tmp' 
+  : path.join(__dirname, '../../data');
 const reviewsFilePath = path.join(dataDir, 'reviews.json');
 
 // Ensure directory and file exist

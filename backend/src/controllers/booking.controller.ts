@@ -4,7 +4,9 @@ import { AppError } from '../utils/AppError';
 import fs from 'fs';
 import path from 'path';
 
-const dataDir = path.join(__dirname, '../../data');
+const dataDir = process.env.VERCEL 
+  ? '/tmp' 
+  : path.join(__dirname, '../../data');
 const bookingsFile = path.join(dataDir, 'bookings.json');
 const roomsFile = path.join(dataDir, 'rooms.json');
 

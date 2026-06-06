@@ -3,7 +3,9 @@ import * as propertyService from '../services/property.service';
 import fs from 'fs';
 import path from 'path';
 
-const dataDir = path.join(__dirname, '../../data');
+const dataDir = process.env.VERCEL 
+  ? '/tmp' 
+  : path.join(__dirname, '../../data');
 const roomsFile = path.join(dataDir, 'rooms.json');
 
 let mockRooms: any[] = [];

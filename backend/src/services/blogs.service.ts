@@ -2,7 +2,9 @@ import { sql } from '../db';
 import fs from 'fs';
 import path from 'path';
 
-const dataDir = path.join(__dirname, '../../data');
+const dataDir = process.env.VERCEL 
+  ? '/tmp' 
+  : path.join(__dirname, '../../data');
 const blogsFile = path.join(dataDir, 'blogs.json');
 
 const seedBlogs = [
