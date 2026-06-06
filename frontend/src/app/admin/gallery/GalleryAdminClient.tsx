@@ -118,7 +118,7 @@ export default function GalleryAdminClient({ initialImages }: { initialImages: G
   return (
     <div className="space-y-6">
       {/* Header action */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           Manage the public website photo gallery. Upload new pictures or delete existing ones.
         </p>

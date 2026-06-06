@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Menu, X, Phone, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -135,12 +134,11 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <motion.div
-          initial={{ opacity: 0, y: "-100%" }}
-          animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : "-100%" }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 bg-[var(--bg)] z-40 flex flex-col justify-center items-center gap-8 pointer-events-none data-[open=true]:pointer-events-auto"
-          data-open={isOpen}
+        <div
+          className={cn(
+            "fixed inset-0 bg-[var(--bg)] z-40 flex flex-col justify-center items-center gap-8 transition-all duration-300 transform",
+            isOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-full pointer-events-none"
+          )}
         >
           {navLinks.map((link) => (
             <Link
@@ -167,7 +165,7 @@ export default function Navbar() {
               <a href="tel:+918318635270" className="text-lg font-bold">+91 83186 35270</a>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </nav>
   );

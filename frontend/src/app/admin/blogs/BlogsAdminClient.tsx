@@ -158,7 +158,7 @@ export default function BlogsAdminClient({ initialPosts }: { initialPosts: BlogP
   return (
     <div className="space-y-6">
       {/* Header operations */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           Write new blogs, delete old posts, and share travel advice directly on the public travel log.
         </p>
