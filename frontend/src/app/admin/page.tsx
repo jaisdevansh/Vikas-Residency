@@ -3,14 +3,19 @@ import { CalendarDays, Users, Bed, CreditCard } from "lucide-react";
 
 export const runtime = "edge";
 
+import { getBookingStats, getRecentBookings } from "@/backend/services/booking.service";
+
 async function getStats() {
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/booking/admin/stats', { cache: 'no-store' });
-    const data = await res.json();
-    if (data.success && data.stats) {
-      return data.stats;
-    }
-    return null;
+    const stats = await getBookingStats();
+    const recentBookings = await getRecentBookings(5);
+    if (!stats) return null;
+    return {
+      ...stats,
+      recentBookings,
+      activeGuests: '--',
+      revenue: '--'
+    };
   } catch (error) {
     console.error("Dashboard Stats Error", error);
     return null;

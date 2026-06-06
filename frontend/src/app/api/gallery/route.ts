@@ -1,26 +1,41 @@
 import { NextResponse } from 'next/server';
+import { getGalleryImages, createGalleryImage } from '@/backend/services/gallery.service';
+import { cookies } from 'next/headers';
 
-export const runtime = 'edge';
-export const revalidate = 0; // Fetch fresh data
+async function checkAuth() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth-token')?.value;
+  return !!token;
+}
 
 export async function GET() {
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const res = await fetch(`${backendUrl}/api/gallery`, { cache: 'no-store' });
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    const data = await res.json();
-    return NextResponse.json({ success: true, images: data.images || [] }, { status: 200 });
+    const images = await getGalleryImages();
+    return NextResponse.json({ success: true, images }, { status: 200 });
   } catch (error) {
-    console.error('Gallery API Error:', error);
-    return NextResponse.json({ 
-      success: true, 
-      mocked: true, 
-      images: [
-        { id: 1, image_url: "https://images.unsplash.com/photo-1542314831-c6a4d142104d?q=80&w=1200&auto=format&fit=crop", caption: "Premium Accommodation" },
-        { id: 2, image_url: "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200&auto=format&fit=crop", caption: "Spiritual Ganga Aarti" },
-      ]
-    }, { status: 200 });
+    console.error('Gallery API GET Error:', error);
+    return NextResponse.json({ error: 'Failed to fetch gallery images' }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const isAuthenticated = await checkAuth();
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { image_url, caption } = body;
+
+    if (!image_url) {
+      return NextResponse.json({ error: 'image_url is required' }, { status: 400 });
+    }
+
+    const newImage = await createGalleryImage({ image_url, caption });
+    return NextResponse.json({ success: true, image: newImage }, { status: 201 });
+  } catch (error) {
+    console.error('Gallery API POST Error:', error);
+    return NextResponse.json({ error: 'Failed to add gallery image' }, { status: 500 });
   }
 }

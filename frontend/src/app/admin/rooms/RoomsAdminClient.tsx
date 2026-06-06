@@ -54,7 +54,7 @@ export default function RoomsAdminClient({ initialRooms }: { initialRooms: any[]
     try {
       if (isAdding) {
         // Create new room
-        const res = await fetch(`http://127.0.0.1:5000/api/rooms`, {
+        const res = await fetch(`/api/rooms`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData)
@@ -70,7 +70,7 @@ export default function RoomsAdminClient({ initialRooms }: { initialRooms: any[]
         }
       } else {
         // Update existing room
-        const res = await fetch(`http://127.0.0.1:5000/api/rooms/${id}`, {
+        const res = await fetch(`/api/rooms/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData)
@@ -94,7 +94,7 @@ export default function RoomsAdminClient({ initialRooms }: { initialRooms: any[]
   const handleDelete = async (id: number) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/rooms/${id}`, {
+      const res = await fetch(`/api/rooms/${id}`, {
         method: "DELETE"
       });
       const data = await res.json();
@@ -121,14 +121,14 @@ export default function RoomsAdminClient({ initialRooms }: { initialRooms: any[]
 
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/upload', {
+      const res = await fetch('/api/upload', {
         method: 'POST',
         body: uploadData,
       });
       const data = await res.json();
       
       if (data.success && data.url) {
-        setFormData((prev: any) => ({ ...prev, image_url: `http://127.0.0.1:5000${data.url}` }));
+        setFormData((prev: any) => ({ ...prev, image_url: data.url }));
         showToast('Image uploaded successfully!');
       } else {
         showToast('Failed to upload image: ' + (data.error || 'Unknown error'), 'error');

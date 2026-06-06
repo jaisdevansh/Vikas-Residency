@@ -2,14 +2,11 @@ import Link from "next/link";
 
 export const runtime = "edge";
 
+import { getAllBookings } from "@/backend/services/booking.service";
+
 async function fetchBookings() {
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/booking/admin/bookings', { cache: 'no-store' });
-    const data = await res.json();
-    if (data.success && data.bookings) {
-      return data.bookings;
-    }
-    return [];
+    return await getAllBookings();
   } catch (error) {
     console.error("Fetch Bookings Error", error);
     return [];

@@ -2,22 +2,19 @@ import GalleryAdminClient from "./GalleryAdminClient";
 
 export const runtime = "edge";
 
-async function getGalleryImages() {
+import { getGalleryImages } from "@/backend/services/gallery.service";
+
+async function getImages() {
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/gallery', { cache: 'no-store' });
-    const data = await res.json();
-    if (data.success && data.images) {
-      return data.images;
-    }
-    return [];
+    return await getGalleryImages();
   } catch (error) {
-    console.error("Failed to fetch gallery images from Express backend:", error);
+    console.error("Failed to fetch gallery images from DB:", error);
     return [];
   }
 }
 
 export default async function AdminGalleryPage() {
-  const images = await getGalleryImages();
+  const images = await getImages();
 
   return (
     <div className="space-y-6">

@@ -43,15 +43,14 @@ export default function GalleryAdminClient({ initialImages }: { initialImages: G
 
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/upload', {
+      const res = await fetch('/api/upload', {
         method: 'POST',
         body: uploadData,
       });
       const data = await res.json();
       
       if (data.success && data.url) {
-        // Construct the full url to the uploaded static file served on Express
-        const fullUrl = `http://127.0.0.1:5000${data.url}`;
+        const fullUrl = data.url;
         setFormData((prev) => ({ ...prev, image_url: fullUrl }));
         showToast('Image file uploaded successfully!');
       } else {
@@ -72,7 +71,7 @@ export default function GalleryAdminClient({ initialImages }: { initialImages: G
 
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/gallery", {
+      const res = await fetch("/api/gallery", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -97,7 +96,7 @@ export default function GalleryAdminClient({ initialImages }: { initialImages: G
   const handleDelete = async (id: number) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/gallery/${id}`, {
+      const res = await fetch(`/api/gallery/${id}`, {
         method: "DELETE"
       });
       const data = await res.json();

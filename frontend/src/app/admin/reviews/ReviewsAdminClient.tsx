@@ -51,7 +51,7 @@ export default function ReviewsAdminClient({ initialReviews }: { initialReviews:
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/reviews/${id}`, {
+      const res = await fetch(`/api/reviews/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -73,8 +73,8 @@ export default function ReviewsAdminClient({ initialReviews }: { initialReviews:
     try {
       const method = editingId ? 'PUT' : 'POST';
       const url = editingId 
-        ? `http://127.0.0.1:5000/api/reviews/${editingId}`
-        : 'http://127.0.0.1:5000/api/reviews';
+        ? `/api/reviews/${editingId}`
+        : '/api/reviews';
         
       const res = await fetch(url, {
         method,

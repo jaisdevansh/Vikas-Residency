@@ -2,20 +2,14 @@ import BlogsAdminClient from "./BlogsAdminClient";
 
 export const dynamic = "force-dynamic";
 
+import { getBlogs } from "@/backend/services/blogs.service";
+
 export default async function AdminBlogsPage() {
   let initialPosts = [];
   try {
-    const res = await fetch("http://127.0.0.1:5000/api/blogs", {
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.blogs) {
-        initialPosts = data.blogs;
-      }
-    }
+    initialPosts = await getBlogs();
   } catch (error) {
-    console.error("Failed to fetch blogs for admin panel:", error);
+    console.error("Failed to fetch blogs from DB:", error);
   }
 
   return (

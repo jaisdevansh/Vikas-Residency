@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
+import { createBooking } from '@/backend/services/booking.service';
 
-export const runtime = 'edge';
-
-// Basic HTML sanitizer to prevent XSS in stored data
 function sanitizeHTML(str: string) {
   if (!str) return '';
   return str.replace(/<[^>]*>?/gm, '').trim();
@@ -30,7 +28,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid email address format' }, { status: 400 });
     }
 
-    // Regex validation for phone numbers (allows +, -, spaces, parentheses, numbers)
+    // Regex validation for phone numbers
     const phoneRegex = /^[0-9+\-\s()]+$/;
     if (guest_phone && !phoneRegex.test(guest_phone)) {
       return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 });
@@ -41,34 +39,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Guest count must be between 1 and 15' }, { status: 400 });
     }
 
-    // Forward the payload to the Express backend running on port 5000
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
-    const backendRes = await fetch(`${backendUrl}/api/booking`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        room_id,
-        check_in,
-        check_out,
-        guest_name,
-        guest_email: guest_email || "",
-        guest_phone,
-        guests
-      })
+    const result = await createBooking({
+      room_id: Number(room_id),
+      check_in,
+      check_out,
+      guest_name,
+      guest_email,
+      guest_phone,
+      guests
     });
 
-    if (!backendRes.ok) {
-      const errorData = await backendRes.json();
-      return NextResponse.json(
-        { error: errorData.error || 'Failed to create booking in backend' },
-        { status: backendRes.status }
-      );
+    if (!result) {
+      return NextResponse.json({ error: 'Room is not available for these dates' }, { status: 409 });
     }
 
-    const data = await backendRes.json();
-    return NextResponse.json(data, { status: 201 });
+    return NextResponse.json({ success: true, booking: result }, { status: 201 });
   } catch (error) {
     console.error('Booking API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

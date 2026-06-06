@@ -65,14 +65,14 @@ export default function BlogsAdminClient({ initialPosts }: { initialPosts: BlogP
 
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/upload', {
+      const res = await fetch('/api/upload', {
         method: 'POST',
         body: uploadData,
       });
       const data = await res.json();
       
       if (data.success && data.url) {
-        const fullUrl = `http://127.0.0.1:5000${data.url}`;
+        const fullUrl = data.url;
         setFormData((prev) => ({ ...prev, image_url: fullUrl }));
         showToast('Image uploaded successfully!');
       } else {
@@ -112,7 +112,7 @@ export default function BlogsAdminClient({ initialPosts }: { initialPosts: BlogP
 
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/blogs", {
+      const res = await fetch("/api/blogs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -136,7 +136,7 @@ export default function BlogsAdminClient({ initialPosts }: { initialPosts: BlogP
   const handleDelete = async (id: number) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/blogs/${id}`, {
+      const res = await fetch(`/api/blogs/${id}`, {
         method: "DELETE"
       });
       const data = await res.json();

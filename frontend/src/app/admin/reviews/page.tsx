@@ -2,16 +2,14 @@ import ReviewsAdminClient from "./ReviewsAdminClient";
 
 export const runtime = "edge";
 
+import { getReviews } from "@/backend/services/review.service";
+
 export default async function AdminReviewsPage() {
   let reviews = [];
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/reviews', { cache: 'no-store' });
-    const data = await res.json();
-    if (data.success) {
-      reviews = data.data;
-    }
+    reviews = await getReviews();
   } catch (error) {
-    console.error("Failed to fetch reviews:", error);
+    console.error("Failed to fetch reviews from DB:", error);
   }
 
   return (

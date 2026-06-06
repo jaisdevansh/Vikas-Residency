@@ -2,16 +2,14 @@ import RoomsAdminClient from "./RoomsAdminClient";
 
 export const runtime = "edge";
 
+import { getRooms } from "@/backend/services/property.service";
+
 export default async function AdminRoomsPage() {
   let rooms = [];
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/rooms', { cache: 'no-store' });
-    const data = await res.json();
-    if (data.success && data.rooms) {
-      rooms = data.rooms;
-    }
+    rooms = await getRooms();
   } catch (err) {
-    console.error("Failed to fetch rooms from backend API:", err);
+    console.error("Failed to fetch rooms from DB:", err);
   }
 
   return (
