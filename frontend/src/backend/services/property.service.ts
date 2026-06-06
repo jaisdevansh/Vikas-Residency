@@ -86,26 +86,51 @@ export async function updateRoom(id: number, data: { name?: string; price?: numb
     return rooms[idx];
   }
   
-  const updates: any[] = [];
-  if (data.name !== undefined) updates.push(sql`name = ${data.name}`);
-  if (data.price !== undefined) updates.push(sql`price = ${data.price}`);
-  if (data.capacity !== undefined) updates.push(sql`capacity = ${data.capacity}`);
-  if (data.image_url !== undefined) updates.push(sql`image_url = ${data.image_url}`);
+  const fields: string[] = [];
+  const values: any[] = [];
+  
+  if (data.name !== undefined) {
+    fields.push(`name = $${fields.length + 1}`);
+    values.push(data.name);
+  }
+  if (data.price !== undefined) {
+    fields.push(`price = $${fields.length + 1}`);
+    values.push(Number(data.price));
+  }
+  if (data.capacity !== undefined) {
+    fields.push(`capacity = $${fields.length + 1}`);
+    values.push(Number(data.capacity));
+  }
+  if (data.image_url !== undefined) {
+    fields.push(`image_url = $${fields.length + 1}`);
+    values.push(data.image_url);
+  }
 
-  if (updates.length === 0) {
+  if (fields.length === 0) {
     const result = await sql`SELECT * FROM rooms WHERE id = ${id}`;
     return result.length > 0 ? result[0] : null;
   }
 
-  const setClause = updates.reduce((acc, current, i) => i === 0 ? current : sql`${acc}, ${current}`);
-
-  const result = await sql`
+  values.push(id);
+  const query = `
     UPDATE rooms 
-    SET ${setClause}
-    WHERE id = ${id}
+    SET ${fields.join(', ')}
+    WHERE id = $${fields.length + 1}
     RETURNING *
   `;
-  return result.length > 0 ? result[0] : null;
+  
+  try {
+    const result = await (sql as any)(query, values);
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("DB updateRoom failed, fallback to mock:", error);
+    const rooms = loadMockRooms();
+    const idx = rooms.findIndex(r => r.id === id);
+    if (idx === -1) return null;
+    rooms[idx] = { ...rooms[idx], ...data };
+    saveMockRooms(rooms);
+    return rooms[idx];
+  }
 }
 
 export async function createRoom(data: { name: string; price: number; capacity: number; image_url?: string }) {

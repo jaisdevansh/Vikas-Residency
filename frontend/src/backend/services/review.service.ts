@@ -145,25 +145,48 @@ export async function updateReview(id: string, data: { name?: string; rating?: n
     return reviews[idx];
   }
 
-  try {
-    const updates: any[] = [];
-    if (data.name !== undefined) updates.push(sql`name = ${data.name}`);
-    if (data.rating !== undefined) updates.push(sql`rating = ${Number(data.rating)}`);
-    if (data.text !== undefined) updates.push(sql`text = ${data.text}`);
-    if (data.date !== undefined) updates.push(sql`date = ${data.date}`);
+  const fields: string[] = [];
+  const values: any[] = [];
+  
+  if (data.name !== undefined) {
+    fields.push(`name = $${fields.length + 1}`);
+    values.push(data.name);
+  }
+  if (data.rating !== undefined) {
+    fields.push(`rating = $${fields.length + 1}`);
+    values.push(Number(data.rating));
+  }
+  if (data.text !== undefined) {
+    fields.push(`text = $${fields.length + 1}`);
+    values.push(data.text);
+  }
+  if (data.date !== undefined) {
+    fields.push(`date = $${fields.length + 1}`);
+    values.push(data.date);
+  }
 
-    if (updates.length === 0) {
+  if (fields.length === 0) {
+    try {
       const res = await sql`SELECT * FROM reviews WHERE id = ${id}`;
       return res.length > 0 ? res[0] : null;
+    } catch (error) {
+      console.error("DB fetch review failed, fallback to mock:", error);
+      const reviews = loadMockReviews();
+      const idx = reviews.findIndex(r => r.id === id);
+      return idx === -1 ? null : reviews[idx];
     }
+  }
 
-    const setClause = updates.reduce((acc, current, i) => i === 0 ? current : sql`${acc}, ${current}`);
-    const result = await sql`
-      UPDATE reviews
-      SET ${setClause}
-      WHERE id = ${id}
-      RETURNING *
-    `;
+  values.push(id);
+  const query = `
+    UPDATE reviews
+    SET ${fields.join(', ')}
+    WHERE id = $${fields.length + 1}
+    RETURNING *
+  `;
+
+  try {
+    const result = await (sql as any)(query, values);
     return result.length > 0 ? result[0] : null;
   } catch (error) {
     console.error("DB Update review failed, fallback to mock", error);
