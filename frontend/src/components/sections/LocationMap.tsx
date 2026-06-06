@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import { MapPin, Plane, Train, Trees, Landmark } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const highlights = [
   { icon: <Landmark size={24} />, name: "Kashi Vishwanath Temple", distance: "10 mins drive" },
@@ -12,17 +11,11 @@ const highlights = [
 ];
 
 export default function LocationMap() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useScrollReveal("-100px");
 
   return (
-    <div className="flex flex-col lg:flex-row gap-12 items-center" ref={ref}>
-      <motion.div 
-        initial={{ opacity: 0, x: -50 }}
-        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-        transition={{ duration: 0.8 }}
-        className="w-full lg:w-1/2 space-y-8"
-      >
+    <div className="flex flex-col lg:flex-row gap-12 items-center" ref={ref as React.RefObject<HTMLDivElement>}>
+      <div className="reveal reveal-left w-full lg:w-1/2 space-y-8">
         <div>
           <h3 className="text-2xl font-serif text-primary flex items-center gap-2 mb-4">
             <MapPin className="text-accent" /> Prime Location in Varanasi
@@ -45,31 +38,26 @@ export default function LocationMap() {
             </div>
           ))}
         </div>
-        
+
         <div className="pt-4">
           <p className="text-sm text-foreground/50 italic">
             * Local guided tours available upon request.
           </p>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div 
-        initial={{ opacity: 0, x: 50 }}
-        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="w-full lg:w-1/2 h-[500px] rounded-2xl overflow-hidden shadow-xl"
-      >
-        <iframe 
-          src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=25.3127,82.9968+(Vikash%20Residency)&t=&z=15&ie=UTF8&iwloc=B&output=embed" 
-          width="100%" 
-          height="100%" 
-          style={{ border: 0 }} 
-          allowFullScreen 
-          loading="lazy" 
+      <div className="reveal reveal-right delay-2 w-full lg:w-1/2 h-[500px] rounded-2xl overflow-hidden shadow-xl">
+        <iframe
+          src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=25.3127,82.9968+(Vikash%20Residency)&t=&z=15&ie=UTF8&iwloc=B&output=embed"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           className="w-full h-full object-cover"
         />
-      </motion.div>
+      </div>
     </div>
   );
 }
